@@ -31,12 +31,6 @@ variable "region" {
   type        = string
 }
 
-variable "cidr" {
-  description = "The CIDR range to be used for the VPC"
-  type        = string
-  default     = ""
-}
-
 variable "account" {
   description = "The AWS account name, as known by the Aviatrix controller"
   type        = string
@@ -251,13 +245,12 @@ locals {
   lower_name        = replace(lower(var.name), " ", "-")
   prefix            = var.prefix ? "avx-" : ""
   suffix            = var.suffix ? "-spoke" : ""
-  cidr              = var.cidr
   name              = "${local.prefix}${local.lower_name}${local.suffix}"
-  #cidrbits          = tonumber(split("/", local.cidr)[1])
-  #newbits           = 26 - local.cidrbits
-  #netnum            = pow(2, local.newbits)
-#  subnet            = var.use_existing_vpc ? var.gw_subnet : (var.insane_mode ? cidrsubnet(local.cidr, local.newbits, local.netnum - 2) : aviatrix_vpc.default[0].public_subnets[0].cidr)
-#  ha_subnet         = var.use_existing_vpc ? var.hagw_subnet : (var.insane_mode ? cidrsubnet(local.cidr, local.newbits, local.netnum - 1) : aviatrix_vpc.default[0].public_subnets[1].cidr)
+  # cidrbits          = tonumber(split("/", var.cidr)[1])
+  # newbits_insane_mode          = 26 - local.cidrbits  # insane mode subnet will be always /26
+  # newbits_gw          = 28 - local.cidrbits  # gw/gwha subnet will be always /28
+  # subnet_gw         = var.insane_mode ? cidrsubnet(var.cidr, local.newbits_insane_mode, 0) : cidrsubnet(var.cidr, local.newbits_gw, 0)
+  # subnet_gwha       = var.insane_mode ? cidrsubnet(var.cidr, local.newbits_insane_mode, 1) : cidrsubnet(var.cidr, local.newbits_gw, 1)
   insane_mode_az    = var.insane_mode ? "${var.region}${var.az1}" : null
   ha_insane_mode_az = var.insane_mode ? "${var.region}${var.az2}" : null
   cloud_type        = var.china ? 1024 : (var.gov ? 256 : 1)
